@@ -1,0 +1,262 @@
+{% extends 'main/base.html' %}
+{% load tags %}
+
+{% block content %}
+    <main class="container-fluid md-3 bg-white">
+        <hr>
+        {% if user.targets_enabled is True %}
+            <div class="container-fluid bg-light">
+                <h4> Current Weight: <strong>75.5 KG</strong> Target Weight: <strong> 80 KG</strong></h4>
+            </div>
+            <hr>
+        {% endif %}
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="container col-md-6 border bg-light">
+                    <div class="container col-md-12">
+                        <canvas id="weight-chart" width="800" height="450"></canvas>
+                    </div>
+                       <script>
+                          new Chart(document.getElementById("weight-chart"), {
+                              type: 'line',
+                              data: {
+                                labels: {{ weight_labels|safe }},
+                                datasets: [{
+                                    data: {{ weight_data|safe }},
+                                    label: "",
+                                    borderColor: "#3e95cd",
+                                    spanGaps: true,
+                                    fill: false
+                                  }]
+                              },
+                              options: {
+                                legend:{
+                                 display: false
+                                 },
+                                title: {
+                                  display: true,
+                                  text: 'Weight'
+                                }, scales: {
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: '{% if user.weight_preference == 'KG'%} {{'Weight (KG)'}} {% else %} {{'Weight (LBS)'}} {% endif %}'
+                                        }
+                                    }]
+                                }
+                              }
+                            });
+
+                      </script>
+                      <br>
+                      <div class="container col-md-11">
+                          <div class="row">
+                              <div class="btn-group col-sm" role="group">
+                                  <form method="POST" class="btn-group col-sm">
+                                      {% csrf_token %}
+                                      <button name="previous_weight_entries" type="submit" class="btn btn-outline-secondary btn-sm">Previous</button>
+                                      <button class="btn btn-outline-secondary btn-sm">Current</button>
+                                      <button name="next_weight_entries" class="btn btn-outline-secondary btn-sm">Next</button>
+                                  </form>
+                              </div>
+                              <div class="col-sm  ">
+                                 <form method="POST" class="row ml-auto">
+                                 {% csrf_token %}
+                                  <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="input_weight" placeholder="eg. 74.5">
+                                  </div>
+                                  <div class="col">
+                                    <button type="submit" class=" btn btn-warning"> Add Entry </button>
+                                     {% if messages %}
+                                        {% for message in messages %}
+                                            {% if message == 'Weight entry has already been made today' %}
+                                                 <h1>he</h1>
+                                                 <script>
+                                                    alert("{{message}}");
+                                                </script>
+                                            {% endif %}
+                                        {% endfor %}
+                                     {% endif %}
+                                  </div>
+                                </form>
+                              </div>
+                          </div>
+                      </div>
+                      <br>
+
+                </div>
+
+
+                <div class="container col-md-6 border bg-light">
+                     <div class="container col-md-12">
+                        <canvas id="calorie-chart" width="800" height="450"></canvas>
+                    </div>
+                       <script>
+                          new Chart(document.getElementById("calorie-chart"), {
+                              type: 'line',
+                              data: {
+                                labels: {{ calorie_labels|safe }},
+                                datasets: [{
+                                    data: {{ calorie_data|safe }},
+                                    label: "",
+                                    borderColor: "#8e5ea2",
+                                    spanGaps: true,
+                                    fill: false
+                                  }]
+                              },
+                              options: {
+                                legend:{
+                                 display: false
+                                 },
+                                title: {
+                                  display: true,
+                                  text: 'Calories'
+                                }, scales: {
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Calories (Kcal)'
+                                        }
+                                    }],
+
+                                }
+                              }
+                            });
+                      </script>
+                      <br>
+                       <div class="container col-md-11">
+                          <div class="row">
+                              <div class="btn-group col-sm" role="group">
+                                  <form method="POST" class="btn-group col-sm">
+                                      {% csrf_token %}
+                                      <button name="previous_calorie_entries" class="btn btn-outline-secondary btn-sm">Previous</button>
+                                      <button class="btn btn-outline-secondary btn-sm">Current</button>
+                                      <button name="next_calorie_entries" class="btn btn-outline-secondary btn-sm">Next</button>
+                                  </form>
+                              </div>
+                              <div class="col-sm  ">
+                                 <form method="POST" class="row ml-auto">
+                                  {% csrf_token %}
+                                  <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="input_calories" placeholder="eg. 2500">
+                                  </div>
+                                  <div class="col">
+                                    <button type="submit" class=" btn btn-warning"> Add Entry </button>
+                                  </div>
+                                </form>
+                               {% if messages %}
+                                    {% for message in messages %}
+                                         {% if message == 'Calorie entry has already been made today' %}
+                                                 <script>
+                                                    alert("{{message}}");
+                                                </script>
+                                         {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                              </div>
+                          </div>
+                      </div>
+                      <br>
+                </div>
+            </div>
+        </div>
+           <div class="container-fluid border col-md-12 bg-light">
+            <div class="row">
+                <div class="container col-md-9">
+                    <canvas id="strength-chart" width="800" height="400"></canvas>
+                </div>
+
+            </div>
+
+              <script>
+                  new Chart(document.getElementById("strength-chart"), {
+                      type: 'line',
+                      data: {
+                        labels: {{ strength_record_labels|safe }},
+                        datasets: [{
+                            data: {{ deadlift_data|safe }},
+                            label: "Deadlift",
+                            borderColor: "#3e95cd",
+                            spanGaps: true,
+                            fill: false
+                          }, {
+                            data: {{ bench_press_data|safe }},
+                            label: "Bench Press",
+                            borderColor: "#8e5ea2",
+                            spanGaps: true,
+                            fill: false
+                          }, {
+                            data: {{ squat_data|safe }},
+                            label: "Squat",
+                            borderColor: "#D2691E",
+                            spanGaps: true,
+                            fill: false
+                          }, {
+                            data: {{ overhead_press_data|safe }},
+                            label: "Overhead Press",
+                            borderColor: "#cc9900",
+                            spanGaps: true,
+                            fill: false
+                          }
+
+                        ]
+                      },
+                      options: {
+                        title: {
+                          display: true,
+                          text: 'Strength Records'
+                        }, scales: {
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: '{% if user.weight_preference == 'KG'%} {{'Weight (KG)'}} {% else %} {{'Weight (LBS)'}} {% endif %}'
+                                }
+                            }]
+                        }
+                      }
+                    });
+              </script>
+              <br>
+              <div class="container col-md-8">
+                  <div class="row">
+                      <div class="btn-group col-sm" role="group">
+                          <form method="POST" class="btn-group col-sm">
+                                      {% csrf_token %}
+                              <button name="previous_record_entries" class="btn btn-outline-secondary btn-sm">Previous</button>
+                              <button class="btn btn-outline-secondary btn-sm">Current</button>
+                              <button name="next_record_entries" class="btn btn-outline-secondary btn-sm">Next</button>
+                          </form>
+                      </div>
+                      <div class="col-sm">
+                         <form method="POST" class="row ml-auto">
+                          {% csrf_token %}
+                           <div class="col-sm-5">
+                              <select class="form-select" name="exercise_record">
+                                <option selected>Select Exercise</option>
+                                  {% get_exercise_options as choices %}
+                                  {% for exercise in choices %}
+                                    <option value="{{exercise}}">{{exercise}}</option>
+                                  {% endfor %}
+
+                              </select>
+
+                          </div>
+                          <div class="col-sm-3">
+                            <input type="text" class="form-control" name="input_record" placeholder="eg. 150">
+                          </div>
+                          <div class="col-sm-4">
+                            <button type="submit" class=" btn btn-warning"> Add Entry </button>
+                          </div>
+                        </form>
+                      </div>
+                  </div>
+              </div>
+              <br>
+        </div>
+    </main>
+
+{% endblock %}

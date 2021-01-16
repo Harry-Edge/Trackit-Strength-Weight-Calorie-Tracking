@@ -1,0 +1,93 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    <div class="container">
+        <br>
+        <h2>Settings</h2>
+        <hr>
+         {% if messages %}
+            {% for message in messages %}
+               <p class="alert alert-info">{{message}}</p>
+            {% endfor %}
+        {% endif %}
+        <br>
+
+        <div class="container">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>Weight Preference: </h4>
+                    </div>
+                    <div class="col-md-5">
+                        <select class="form-select" name="change_weight_preference">
+                            {% if user.weight_preference == 'KG'%}
+                                <option value="KG">KG</option>
+                                <option value="LBS">LBS</option>
+                            {% elif user.weight_preference == 'LBS' %}
+                                <option value="LBS">LBS</option>
+                                <option value="KG">KG</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>Enable Targets: </h4>
+                    </div>
+                    <div class="col-md-5">
+                        <select class="form-select" name="enable_targets">
+                            {% if user.targets_enabled == False %}
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+                            {% elif user.targets_enabled == True %}
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+                <br>
+
+                {% if user.targets_enabled == True %}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>Deadlift Target (KG): </h5>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" placeholder="{{user.deadlift_record}}">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>Bench Press Target (KG): </h5>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" placeholder="{{user.bench_press_record}}">
+                        </div>
+                    </div>
+                    <br>
+                     <div class="row">
+                        <div class="col-md-4">
+                            <h5>Squat Target (KG): </h5>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" placeholder="{{user.squat_record}}">
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <br>
+                <button type="submit" class="btn btn-warning btn-lg">Update</button>
+
+
+            </form>
+        </div>
+        <br>
+
+    </div>
+
+{% endblock %}
