@@ -104,3 +104,55 @@ def get_overhead_press_data(user, strength_record_label):
     #bench_press_data = process.get_bench_press_data(user, strength_record_label)
     #squat_data = process.get_squat_data(user, strength_record_label)
     #overhead_press_data = process.get_overhead_press_data(user, strength_record_label)
+
+
+
+<div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <h5>&nbsp</h5>
+                            <h5>Weight:</h5>
+                            <h5>Deadlift:</h5>
+                            <h5>Bench(P)</h5>
+                            <h5>Squat:</h5>
+                            <h5>Overhead(P):</h5>
+                        </div>
+                          <div class="col">
+                            <h5><strong>Current</strong></h5>
+                            <h5>{{user.current_weight}} {{user.weight_preference}}</h5>
+                            <h5>{{user.deadlift_record}} {{user.weight_preference}}</h5>
+                            <h5>{{user.bench_press_record}} {{user.weight_preference}}</h5>
+                            <h5>{{user.squat_record}} {{user.weight_preference}}</h5>
+                            <h5>{{user.overhead_press_record}} {{user.weight_preference}}</h5>
+                          </div>
+                        <div class="col">
+                            <h5><strong>Target</strong></h5>
+                            <h5>{{user.weight_target}} KG</h5>
+                            <h5>{{user.deadlift_target}} KG</h5>
+                            <h5>{{user.bench_press_target}} KG</h5>
+                            <h5>{{user.squat_target}} KG</h5>
+                            <h5>{{user.overhead_press_target}} KG</h5>
+                          </div>
+                        <div class="col">
+                            <h5><strong>Difference</strong></h5>
+                            <h5 id="weight_difference"></h5>
+                            <h5 id="deadlift_difference"></h5>
+                            <h5 id="bench_press_difference"></h5>
+                            <h5 id="squat_difference"></h5>
+                            <h5 id="overhead_press_difference"></h5>
+
+                            <script>
+                                document.getElementById("deadlift_difference").innerHTML = (({{user.deadlift_target}} - {{user.deadlift_record}}) + " {{user.weight_preference}}")
+                                document.getElementById("bench_press_difference").innerHTML = (({{user.bench_press_target}} - {{user.bench_press_record}}) + " {{user.weight_preference}}")
+                                document.getElementById("squat_difference").innerHTML = (({{user.squat_target}} - {{user.squat_record}}) + " {{user.weight_preference}}")
+                                document.getElementById("overhead_press_difference").innerHTML = (({{user.overhead_press_target}} - {{user.overhead_press_record}}) + " {{user.weight_preference}}")
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+document.getElementById("weight_difference").innerHTML = (({{user.weight_target}} - {{user.current_weight}}) + " {{user.weight_preference}}")
+document.getElementById("deadlift_difference").innerHTML = (({{user.deadlift_target}} - {{user.deadlift_record}}) + " {{user.weight_preference}}")
+document.getElementById("bench_press_difference").innerHTML = (({{user.bench_press_target}} - {{user.bench_press_record}}) + " {{user.weight_preference}}")
+document.getElementById("squat_difference").innerHTML = (({{user.squat_target}} - {{user.squat_record}}) + " {{user.weight_preference}}")
+document.getElementById("overhead_press_difference").innerHTML = (({{user.overhead_press_target}} - {{user.overhead_press_record}}) + " {{user.weight_preference}}")

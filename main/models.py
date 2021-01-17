@@ -10,21 +10,26 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=200, null=True)
     email = models.CharField(max_length=200, null=True)
     weight_preference = models.CharField(choices=WEIGHT_CHOICES, null=True, max_length=3)
+    current_weight = models.FloatField(null=True)
 
-    #Records
+    # Records
     deadlift_record = models.FloatField(null=True)
     bench_press_record = models.FloatField(null=True)
     squat_record = models.FloatField(null=True)
     overhead_press_record = models.FloatField(null=True)
 
-    targets_enabled = models.BooleanField(default=False, null=True)
-
-    #Targets
+    # Targets
+    targets_enabled = models.BooleanField(default=False)
+    weight_target = models.FloatField(null=True)
+    deadlift_target = models.IntegerField(null=True)
+    bench_press_target = models.IntegerField(null=True)
+    squat_target = models.IntegerField(null=True)
+    overhead_press_target = models.IntegerField(null=True)
 
     # Temporary store of data for previous/next entries
-    weight_data = models.IntegerField(default=0)
-    calorie_data = models.IntegerField(default=0)
-    strength_data = models.IntegerField(default=0)
+    weight_data_date_range = models.IntegerField(default=0)
+    calorie_data_date_range = models.IntegerField(default=0)
+    strength_data_date_range = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

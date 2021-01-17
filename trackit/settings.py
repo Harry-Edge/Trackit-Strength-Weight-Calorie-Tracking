@@ -127,10 +127,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
+    messages.INFO: 'alert alert-info',
     messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
+    messages.WARNING: 'alert alert-warning',
     messages.ERROR: 'alert-danger',
 }

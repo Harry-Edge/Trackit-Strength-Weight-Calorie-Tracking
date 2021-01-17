@@ -9,6 +9,7 @@ from .models import *
 from main import process
 from datetime import datetime
 from .forms import *
+import json
 
 @unauthenticated_user
 def login_page(request):
@@ -18,7 +19,6 @@ def login_page(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-
             login(request, user)
             return redirect('dashboard')
 
@@ -34,7 +34,6 @@ def register(request):
         user_creation_form = UserSignUpForm(request.POST)
         if user_creation_form.is_valid():
             user_creation_form.save()
-
             username = user_creation_form.cleaned_data.get('username')
             raw_password = user_creation_form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
@@ -114,7 +113,6 @@ def dashboard(request):
     overhead_press_data = process.get_strength_record_data(user, strength_record_label, 'Overhead Press',
                                                            user.overhead_press_record)
 
-
     context = {'user': user, 'weight_labels': weight_labels, 'weight_data': weight_data,
                'calorie_labels': calorie_label, 'calorie_data': calorie_data,
                'strength_record_labels': strength_record_label, 'deadlift_data': deadlift_data, 'squat_data': squat_data,
@@ -163,14 +161,40 @@ def settings(request):
     user = Customer.objects.get(user=request.user)
 
     weight_preference = request.POST.get('change_weight_preference')
-    if weight_preference is not None:
+    if weight_preference != user.weight_preference and weight_preference is not None:
+        print("cjge")
         process.change_weight_preference(user, weight_preference)
         messages.add_message(request, messages.INFO, "Updated Weight Preference")
 
     enable_targets = request.POST.get('enable_targets')
-    if enable_targets is not None:
+    if enable_targets == 'yes':
+        enable_targets = True
+    elif enable_targets == 'no':
+        enable_targets = False
+    if enable_targets != user.targets_enabled and enable_targets is not None:
         process.enable_or_disable_targets(user, enable_targets)
-        messages.add_message(request, messages.INFO, "Changed Targets")
+        messages.add_message(request, messages.INFO, "Enabled/Disabled Targets")
+
+    edit_weight_target = request.POST.get('edit_weight_target')
+    if edit_weight_target:
+        process.change_target(user, 'Weight', edit_weight_target)
+        messages.add_message(request, messages.INFO, "Updated Weight Target")
+    edit_deadlift_target = request.POST.get('edit_deadlift_target')
+    if edit_deadlift_target:
+        process.change_target(user, 'Deadlift', edit_deadlift_target)
+        messages.add_message(request, messages.INFO, "Updated Deadlift Target")
+    edit_bench_press_target = request.POST.get('edit_bench_press_target')
+    if edit_bench_press_target:
+        process.change_target(user, 'Bench Press', edit_bench_press_target)
+        messages.add_message(request, messages.INFO, "Updated Bench Press Target")
+    edit_squat_target = request.POST.get('edit_squat_target')
+    if edit_squat_target:
+        process.change_target(user, 'Squat', edit_squat_target)
+        messages.add_message(request, messages.INFO, "Updated Squat Target")
+    edit_overhead_press_target = request.POST.get('edit_overhead_press_target')
+    if edit_overhead_press_target:
+        process.change_target(user, 'Overhead Press', edit_overhead_press_target)
+        messages.add_message(request, messages.INFO, "Updated Overhead Press Target")
 
     context = {'user': user}
 
@@ -181,6 +205,8 @@ def settings(request):
     - can add entries multipul entries on the same day 
     - MEssages is al over the place 
     - says 20 when account is created 
+    - Targets still show option even if the user had made no entries 
+    
 """
 
 

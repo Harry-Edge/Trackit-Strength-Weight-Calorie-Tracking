@@ -1,16 +1,72 @@
 {% extends 'main/base.html' %}
 {% load tags %}
+{% load static %}
 
 {% block content %}
+
     <main class="container-fluid md-3 bg-white">
         <hr>
         {% if user.targets_enabled is True %}
             <div class="container-fluid bg-light">
-                <h4> Current Weight: <strong>75.5 KG</strong> Target Weight: <strong> 80 KG</strong></h4>
+                <div class="container">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Current</th>
+                          <th scope="col">Target</th>
+                          <th scope="col">Difference</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><strong>Weight:</strong></td>
+                          <td>{% return_correct_weight_data user.weight_preference user.current_weight %} {{user.weight_preference}}</td>
+                          <td>{% return_correct_weight_data user.weight_preference user.weight_target %} {{user.weight_preference}}</td>
+                          <td>{% return_weight_difference user.weight_preference user.weight_target user.current_weight %} {{user.weight_preference}}</td>
+                        </tr>
+                        {% check_if_entry_has_been_made user "Deadlift" as check_entry %}
+                        {% if check_entry is True %}
+                             <tr>
+                              <td><strong>Deadlift:</strong></td>
+                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_record %} {{user.weight_preference}}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_target %} {{user.weight_preference}}</td>
+                              <td>{% return_weight_difference user.weight_preference user.deadlift_target user.deadlift_record %} {{user.weight_preference}} </td>
+                             </tr>
+                        {% endif %}
+                        {% check_if_entry_has_been_made user "Bench Press" as check_entry %}
+                        {% if check_entry is True %}
+                            <tr>
+                              <td><strong>Bench Press:</strong></td>
+                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_record %} {{user.weight_preference}}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_target %} {{user.weight_preference}}</td>
+                              <td>{% return_weight_difference user.weight_preference user.bench_press_target user.bench_press_record %} {{user.weight_preference}}</td>
+                            </tr>
+                        {% endif %}
+                        {% check_if_entry_has_been_made user "Squat" as check_entry %}
+                        {% if check_entry is True %}
+                        <tr>
+                          <td><strong>Squat:</strong></td>
+                          <td>{% return_correct_weight_data user.weight_preference user.squat_record %} {{user.weight_preference}}</td>
+                          <td>{% return_correct_weight_data user.weight_preference user.squat_target %} {{user.weight_preference}}</td>
+                          <td>{% return_weight_difference user.weight_preference user.squat_target user.squat_record %} {{user.weight_preference}}</td>
+                         </tr>
+                        {% endif %}
+                        {% check_if_entry_has_been_made user "Overhead Press" as check_entry %}
+                        {% if check_entry is True %}
+                         <tr>
+                          <td><strong>Overhead Press:</strong></td>
+                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_record %} {{user.weight_preference}}</td>
+                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_target %} {{user.weight_preference}}</td>
+                          <td>{% return_weight_difference user.weight_preference user.overhead_press_target user.overhead_press_record %} {{user.weight_preference}}</td>
+                         </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                </div>
             </div>
             <hr>
         {% endif %}
-
         <div class="container-fluid">
             <div class="row">
                 <div class="container col-md-6 border bg-light">
@@ -225,7 +281,7 @@
                   <div class="row">
                       <div class="btn-group col-sm" role="group">
                           <form method="POST" class="btn-group col-sm">
-                                      {% csrf_token %}
+                               {% csrf_token %}
                               <button name="previous_record_entries" class="btn btn-outline-secondary btn-sm">Previous</button>
                               <button class="btn btn-outline-secondary btn-sm">Current</button>
                               <button name="next_record_entries" class="btn btn-outline-secondary btn-sm">Next</button>
@@ -241,9 +297,7 @@
                                   {% for exercise in choices %}
                                     <option value="{{exercise}}">{{exercise}}</option>
                                   {% endfor %}
-
                               </select>
-
                           </div>
                           <div class="col-sm-3">
                             <input type="text" class="form-control" name="input_record" placeholder="eg. 150">
@@ -257,6 +311,7 @@
               </div>
               <br>
         </div>
+        <script type="text/javascript" src="{% static 'main/script.js' %}"></script>
     </main>
 
 {% endblock %}

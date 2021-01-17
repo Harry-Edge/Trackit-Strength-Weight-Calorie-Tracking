@@ -9,6 +9,9 @@ def add_weight_entry(user, inputted_weight):
     Weight.objects.get_or_create(user=user, inputted_weight=float(inputted_weight),
                                  date_of_entry=datetime.today().date())
 
+    user.current_weight = inputted_weight
+    user.save()
+
 
 def add_calorie_entry(user, inputted_calories):
 
@@ -37,11 +40,11 @@ def add_strength_entry(user, exercise, record_weight_amount):
 def get_weight_labels_and_data(user, date_range):
 
     if date_range == '+10':
-        user.weight_data += 10
+        user.weight_data_date_range += 10
     elif date_range == '-10':
-        user.weight_data -= 10
+        user.weight_data_date_range -= 10
     else:
-        user.weight_data = 0
+        user.weight_data_date_range = 0
     user.save()
 
     weight_labels = []
@@ -49,7 +52,7 @@ def get_weight_labels_and_data(user, date_range):
 
     previous_days = 20
     while previous_days != -1:
-        weight_labels.append(((datetime.today().date() - timedelta(days=user.weight_data))
+        weight_labels.append(((datetime.today().date() - timedelta(days=user.weight_data_date_range))
                               - timedelta(days=previous_days)).strftime('%d%m'))
         previous_days -= 1
 
@@ -72,11 +75,11 @@ def get_weight_labels_and_data(user, date_range):
 def get_calorie_labels_and_data(user, date_range):
 
     if date_range == '+10':
-        user.calorie_data += 10
+        user.calorie_data_date_range += 10
     elif date_range == '-10':
-        user.calorie_data -= 10
+        user.calorie_data_date_range -= 10
     else:
-        user.calorie_data = 0
+        user.calorie_data_date_range = 0
     user.save()
 
     calorie_labels = []
@@ -84,7 +87,7 @@ def get_calorie_labels_and_data(user, date_range):
 
     previous_days = 20
     while previous_days != -1:
-        calorie_labels.append(((datetime.today().date() - timedelta(days=user.calorie_data))
+        calorie_labels.append(((datetime.today().date() - timedelta(days=user.calorie_data_date_range))
                                - timedelta(days=previous_days)).strftime('%d%m'))
         previous_days -= 1
 
@@ -104,18 +107,18 @@ def get_calorie_labels_and_data(user, date_range):
 def get_strength_records_label(user, date_range):
 
     if date_range == '+20':
-        user.strength_data += 20
+        user.strength_data_date_range += 20
     elif date_range == '-20':
-        user.strength_data -= 20
+        user.strength_data_date_range -= 20
     else:
-        user.strength_data = 0
+        user.strength_data_date_range = 0
     user.save()
 
     # This generates labels for strength records based on the last 31 days
     strength_record_label = []
     previous_days = 31
     while previous_days != -1:
-        strength_record_label.append(((datetime.today().date() - timedelta(days=user.strength_data))
+        strength_record_label.append(((datetime.today().date() - timedelta(days=user.strength_data_date_range))
                                      - timedelta(days=previous_days)).strftime('%d%m'))
         previous_days -= 1
 
@@ -139,7 +142,7 @@ def get_strength_record_data(user, strength_record_label, exercise, current_reco
         if check_if_entry_has_been_made(entry) is not True:
             strength_data.append('null')
 
-    if StrengthRecords.objects.filter(user=user).count() >=1:
+    if StrengthRecords.objects.filter(user=user).count() >= 1:
         if StrengthRecords.objects.filter(user=user, exercise=exercise).count() >= 1:
             if user.weight_preference == 'LBS':
                 strength_data[-1] = current_record * 2.20462
@@ -153,16 +156,35 @@ def change_weight_preference(user, option):
 
     if option == 'KG':
         user.weight_preference = 'KG'
-    else:
+    elif option == 'LBS':
         user.weight_preference = 'LBS'
     user.save()
 
+
 def enable_or_disable_targets(user, option):
 
-    if option == 'no':
+
+    if option == False:
         user.targets_enabled = False
     else:
         user.targets_enabled = True
 
     user.save()
+
+
+def change_target(user, option, new_amount):
+
+    if option == 'Weight':
+        user.weight_target = new_amount
+    elif option == 'Deadlift':
+        user.deadlift_target = new_amount
+    elif option == 'Bench Press':
+        user.bench_press_target = new_amount
+    elif option == 'Squat':
+        user.squat_target = new_amount
+    elif option == 'Overhead Press':
+        user.overhead_press_target = new_amount
+
+    user.save()
+
 

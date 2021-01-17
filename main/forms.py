@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm, UserCreationForm
+from .models import Customer
 
 class UserSignUpForm(UserCreationForm):
 
@@ -34,7 +35,7 @@ class UserProfileForm(UserChangeForm):
 
     password = None
 
-    username = forms.CharField(max_length=100,  widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
+    username = forms.CharField(max_length=100, label="",  widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
     email = forms.EmailField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
     first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
     last_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
@@ -44,6 +45,14 @@ class UserProfileForm(UserChangeForm):
         fields = ('username', 'email', 'first_name', 'last_name', )
         password = None
 
+
+class UserSettingsForm(forms.Form):
+
+    weight_preference = forms.BooleanField(widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
+
+    class Meta:
+        model = Customer
+        fields = ('weight_preference')
 
 class ChangePasswordForm(PasswordChangeForm):
 

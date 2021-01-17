@@ -6,15 +6,13 @@
         <hr>
          {% if messages %}
             {% for message in messages %}
-               <p class="alert alert-info">{{message}}</p>
+               <p class="{{message.tags}}">{{message}}</p>
             {% endfor %}
         {% endif %}
         <br>
-
         <div class="container">
             <form method="POST">
                 {% csrf_token %}
-
                 <div class="row">
                     <div class="col-md-4">
                         <h4>Weight Preference: </h4>
@@ -49,15 +47,23 @@
                     </div>
                 </div>
                 <br>
-
                 {% if user.targets_enabled == True %}
                 <div class="container">
                     <div class="row">
                         <div class="col-md-4">
+                            <h5>Weight Target (KG): </h5>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" placeholder="{{user.weight_target}}" name="edit_weight_target">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">
                             <h5>Deadlift Target (KG): </h5>
                         </div>
-                        <div class="col-md-4">
-                            <input class="form-control" placeholder="{{user.deadlift_record}}">
+                        <div class="col-md-3">
+                            <input class="form-control" placeholder="{{user.deadlift_target}}" name="edit_deadlift_target">
                         </div>
                     </div>
                     <br>
@@ -65,8 +71,8 @@
                         <div class="col-md-4">
                             <h5>Bench Press Target (KG): </h5>
                         </div>
-                        <div class="col-md-4">
-                            <input class="form-control" placeholder="{{user.bench_press_record}}">
+                        <div class="col-md-3">
+                            <input class="form-control" placeholder="{{user.bench_press_target}}" name="edit_bench_press_target">
                         </div>
                     </div>
                     <br>
@@ -74,20 +80,25 @@
                         <div class="col-md-4">
                             <h5>Squat Target (KG): </h5>
                         </div>
+                        <div class="col-md-3">
+                            <input class="form-control" placeholder="{{user.squat_target}}" name="edit_squat_target">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
                         <div class="col-md-4">
-                            <input class="form-control" placeholder="{{user.squat_record}}">
+                            <h5>Overhead Press Target (KG): </h5>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" placeholder="{{user.overhead_press_target}}" name="edit_overhead_press_target">
                         </div>
                     </div>
                 </div>
                 {% endif %}
                 <br>
                 <button type="submit" class="btn btn-warning btn-lg">Update</button>
-
-
             </form>
         </div>
         <br>
-
     </div>
-
 {% endblock %}
