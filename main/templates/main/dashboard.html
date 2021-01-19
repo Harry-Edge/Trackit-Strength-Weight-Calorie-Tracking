@@ -3,7 +3,6 @@
 {% load static %}
 
 {% block content %}
-
     <main class="container-fluid md-3 bg-white">
         <hr>
         {% if user.targets_enabled is True %}
@@ -19,46 +18,49 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td><strong>Weight:</strong></td>
-                          <td>{% return_correct_weight_data user.weight_preference user.current_weight %} {{user.weight_preference}}</td>
-                          <td>{% return_correct_weight_data user.weight_preference user.weight_target %} {{user.weight_preference}}</td>
-                          <td>{% return_weight_difference user.weight_preference user.weight_target user.current_weight %} {{user.weight_preference}}</td>
-                        </tr>
+                        {% check_if_weight_entry_has_been_made user as check_entry %}
+                        {% if check_entry is True %}
+                            <tr>
+                              <td><strong>Weight:</strong></td>
+                              <td>{% return_correct_weight_data user.weight_preference user.current_weight %}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.weight_target %}</td>
+                              <td>{% return_weight_difference user.weight_preference user.weight_target user.current_weight %}</td>
+                            </tr>
+                        {% endif %}
                         {% check_if_entry_has_been_made user "Deadlift" as check_entry %}
                         {% if check_entry is True %}
                              <tr>
                               <td><strong>Deadlift:</strong></td>
-                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_record %} {{user.weight_preference}}</td>
-                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_target %} {{user.weight_preference}}</td>
-                              <td>{% return_weight_difference user.weight_preference user.deadlift_target user.deadlift_record %} {{user.weight_preference}} </td>
+                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_record %}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_target %}</td>
+                              <td>{% return_weight_difference user.weight_preference user.deadlift_target user.deadlift_record %}</td>
                              </tr>
                         {% endif %}
                         {% check_if_entry_has_been_made user "Bench Press" as check_entry %}
                         {% if check_entry is True %}
                             <tr>
                               <td><strong>Bench Press:</strong></td>
-                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_record %} {{user.weight_preference}}</td>
-                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_target %} {{user.weight_preference}}</td>
-                              <td>{% return_weight_difference user.weight_preference user.bench_press_target user.bench_press_record %} {{user.weight_preference}}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_record %}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_target %}</td>
+                              <td>{% return_weight_difference user.weight_preference user.bench_press_target user.bench_press_record %}</td>
                             </tr>
                         {% endif %}
                         {% check_if_entry_has_been_made user "Squat" as check_entry %}
                         {% if check_entry is True %}
                         <tr>
                           <td><strong>Squat:</strong></td>
-                          <td>{% return_correct_weight_data user.weight_preference user.squat_record %} {{user.weight_preference}}</td>
-                          <td>{% return_correct_weight_data user.weight_preference user.squat_target %} {{user.weight_preference}}</td>
-                          <td>{% return_weight_difference user.weight_preference user.squat_target user.squat_record %} {{user.weight_preference}}</td>
+                          <td>{% return_correct_weight_data user.weight_preference user.squat_record %}</td>
+                          <td>{% return_correct_weight_data user.weight_preference user.squat_target %}</td>
+                          <td>{% return_weight_difference user.weight_preference user.squat_target user.squat_record %}</td>
                          </tr>
                         {% endif %}
                         {% check_if_entry_has_been_made user "Overhead Press" as check_entry %}
                         {% if check_entry is True %}
                          <tr>
                           <td><strong>Overhead Press:</strong></td>
-                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_record %} {{user.weight_preference}}</td>
-                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_target %} {{user.weight_preference}}</td>
-                          <td>{% return_weight_difference user.weight_preference user.overhead_press_target user.overhead_press_record %} {{user.weight_preference}}</td>
+                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_record %}</td>
+                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_target %}</td>
+                          <td>{% return_weight_difference user.weight_preference user.overhead_press_target user.overhead_press_record %}</td>
                          </tr>
                         {% endif %}
                       </tbody>
@@ -67,6 +69,11 @@
             </div>
             <hr>
         {% endif %}
+         {% if messages %}
+            {% for message in messages %}
+                <p class="{{message.tags}}">{{message}}</p>
+            {% endfor %}
+         {% endif %}
         <div class="container-fluid">
             <div class="row">
                 <div class="container col-md-6 border bg-light">
@@ -104,7 +111,6 @@
                                 }
                               }
                             });
-
                       </script>
                       <br>
                       <div class="container col-md-11">
@@ -125,26 +131,13 @@
                                   </div>
                                   <div class="col">
                                     <button type="submit" class=" btn btn-warning"> Add Entry </button>
-                                     {% if messages %}
-                                        {% for message in messages %}
-                                            {% if message == 'Weight entry has already been made today' %}
-                                                 <h1>he</h1>
-                                                 <script>
-                                                    alert("{{message}}");
-                                                </script>
-                                            {% endif %}
-                                        {% endfor %}
-                                     {% endif %}
                                   </div>
                                 </form>
                               </div>
                           </div>
                       </div>
                       <br>
-
                 </div>
-
-
                 <div class="container col-md-6 border bg-light">
                      <div class="container col-md-12">
                         <canvas id="calorie-chart" width="800" height="450"></canvas>
@@ -224,9 +217,7 @@
                 <div class="container col-md-9">
                     <canvas id="strength-chart" width="800" height="400"></canvas>
                 </div>
-
             </div>
-
               <script>
                   new Chart(document.getElementById("strength-chart"), {
                       type: 'line',
@@ -313,5 +304,4 @@
         </div>
         <script type="text/javascript" src="{% static 'main/script.js' %}"></script>
     </main>
-
 {% endblock %}

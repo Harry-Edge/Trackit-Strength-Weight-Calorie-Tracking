@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Customer(models.Model):
 
     WEIGHT_CHOICES = [('KG', 'KG'), ('LBS', 'LBS')]
@@ -45,7 +46,7 @@ class Weight(models.Model):
         return f"{self.user} {self.date_of_entry} ({self.inputted_weight})"
 
     class Meta:
-        verbose_name_plural = "Weight"
+        verbose_name_plural = "Weight Entries"
 
 
 class Calories(models.Model):
@@ -58,7 +59,7 @@ class Calories(models.Model):
         return f'{self.user} {self.date_of_entry} {self.inputted_calories}'
 
     class Meta:
-        verbose_name_plural = "Calories"
+        verbose_name_plural = "Calorie Entries"
 
 
 class StrengthRecords(models.Model):
@@ -71,9 +72,9 @@ class StrengthRecords(models.Model):
     weight_record = models.FloatField(null=True)
     date_of_record = models.DateField(auto_now_add=False, null=True)
 
-
     def __str__(self):
+
         return f'{self.user} {self.exercise} {self.weight_record} {self.date_of_record}'
 
     class Meta:
-        verbose_name_plural = 'Strength Records'
+        verbose_name_plural = 'Strength Record Entries'

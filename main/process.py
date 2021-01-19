@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 
 def add_weight_entry(user, inputted_weight):
 
+    """ Any inputted weight data is always stored in KG on the database,
+     is the users preference is 'LBS' it is converted to KG before being stored """
+
     if user.weight_preference == 'LBS':
         inputted_weight = round((float(inputted_weight) / 2.20462), 1)
     Weight.objects.get_or_create(user=user, inputted_weight=float(inputted_weight),
@@ -21,11 +24,16 @@ def add_calorie_entry(user, inputted_calories):
 
 def add_strength_entry(user, exercise, record_weight_amount):
 
+    """ Any inputted strength data is always stored in KG on the database,
+         is the users preference is 'LBS' it is converted to KG before being stored """
+
     if user.weight_preference == 'LBS':
         record_weight_amount = round((float(record_weight_amount) / 2.20462), 1)
 
     StrengthRecords.objects.get_or_create(user=user, exercise=exercise, weight_record=record_weight_amount,
                                           date_of_record=datetime.today().date())
+
+    # Saves the new record to the customer model
     if exercise == 'Deadlift':
         user.deadlift_record = record_weight_amount
     elif exercise == 'Squat':
@@ -39,6 +47,9 @@ def add_strength_entry(user, exercise, record_weight_amount):
 
 def get_weight_labels_and_data(user, date_range):
 
+    """ This function gets both the data and labels for the Weight line chart depending on the user date range. """
+
+    # Adjusts date range by - or + 10 days
     if date_range == '+10':
         user.weight_data_date_range += 10
     elif date_range == '-10':
@@ -50,6 +61,7 @@ def get_weight_labels_and_data(user, date_range):
     weight_labels = []
     weight_data = []
 
+    # Generate labels for previous 20 days depending on date range
     previous_days = 20
     while previous_days != -1:
         weight_labels.append(((datetime.today().date() - timedelta(days=user.weight_data_date_range))
@@ -57,9 +69,13 @@ def get_weight_labels_and_data(user, date_range):
         previous_days -= 1
 
     for entry in weight_labels:
-        def check_if_entry_has_been_made(variable):
+
+        """ This checks in a weight entry has been made in the database compared to the label dates.
+         If so, it is added to the weight data. If not, a value of 'null' is added. """
+
+        def check_if_entry_has_been_made(label_date):
             for weight_entry in Weight.objects.filter(user=user):
-                if variable == weight_entry.date_of_entry.strftime('%d%m'):
+                if label_date == weight_entry.date_of_entry.strftime('%d%m'):
                     if user.weight_preference == 'LBS':
                         weight_data.append(weight_entry.inputted_weight * 2.20462)
                     else:
@@ -74,6 +90,9 @@ def get_weight_labels_and_data(user, date_range):
 
 def get_calorie_labels_and_data(user, date_range):
 
+    """ This function gets both the data and labels for the Calorie line chart depending on the user date range."""
+
+    # Adjusts date range by - or + 10 days
     if date_range == '+10':
         user.calorie_data_date_range += 10
     elif date_range == '-10':
@@ -92,9 +111,13 @@ def get_calorie_labels_and_data(user, date_range):
         previous_days -= 1
 
     for entry in calorie_labels:
-        def check_if_entry_has_been_made(variable):
+
+        """ This checks in a calorie entry has been made in the database compared to the label dates.
+            If so, it is added to the calorie data. If not, a value of 'null' is added. """
+
+        def check_if_entry_has_been_made(label_date):
             for calorie_entry in Calories.objects.filter(user=user):
-                if variable == calorie_entry.date_of_entry.strftime('%d%m'):
+                if label_date == calorie_entry.date_of_entry.strftime('%d%m'):
                     calorie_data.append(calorie_entry.inputted_calories)
                     return True
 
@@ -106,6 +129,9 @@ def get_calorie_labels_and_data(user, date_range):
 
 def get_strength_records_label(user, date_range):
 
+    """ This function get labels for the Strength Record line chart depending on the user date range."""
+
+    # Adjusts date range by - or + 10 days
     if date_range == '+20':
         user.strength_data_date_range += 20
     elif date_range == '-20':
@@ -114,7 +140,7 @@ def get_strength_records_label(user, date_range):
         user.strength_data_date_range = 0
     user.save()
 
-    # This generates labels for strength records based on the last 31 days
+    # Generates labels for strength records for the previous 31 days depending on date range
     strength_record_label = []
     previous_days = 31
     while previous_days != -1:
@@ -130,9 +156,13 @@ def get_strength_record_data(user, strength_record_label, exercise, current_reco
     strength_data = []
 
     for entry in strength_record_label:
-        def check_if_entry_has_been_made(variable):
+
+        """ This checks in a strength for a given exercise entry has been made in the database compared to
+            the label dates. If so, it is added to the strength data. If not, a value of 'null' is added. """
+
+        def check_if_entry_has_been_made(label_date):
             for record in StrengthRecords.objects.filter(user=user, exercise=exercise):
-                if variable == record.date_of_record.strftime('%d%m'):
+                if label_date == record.date_of_record.strftime('%d%m'):
                     if user.weight_preference == 'LBS':
                         strength_data.append(record.weight_record * 2.20462)
                     else:
@@ -142,12 +172,15 @@ def get_strength_record_data(user, strength_record_label, exercise, current_reco
         if check_if_entry_has_been_made(entry) is not True:
             strength_data.append('null')
 
-    if StrengthRecords.objects.filter(user=user).count() >= 1:
-        if StrengthRecords.objects.filter(user=user, exercise=exercise).count() >= 1:
-            if user.weight_preference == 'LBS':
-                strength_data[-1] = current_record * 2.20462
-            else:
-                strength_data[-1] = current_record
+    """ Below checks first to see if a user has entered any strength data for a particular exercise. If any entry has
+        been made, the current data entry is appended from 'null' to the user current record. This is done so the line
+        chart visually looks better due to the likely-hood of strength records taking weeks/months to be broken. """
+
+    if StrengthRecords.objects.filter(user=user, exercise=exercise).count() >= 1:
+        if user.weight_preference == 'LBS':
+            strength_data[-1] = current_record * 2.20462
+        else:
+            strength_data[-1] = current_record
 
     return strength_data
 
@@ -158,13 +191,13 @@ def change_weight_preference(user, option):
         user.weight_preference = 'KG'
     elif option == 'LBS':
         user.weight_preference = 'LBS'
+
     user.save()
 
 
 def enable_or_disable_targets(user, option):
 
-
-    if option == False:
+    if option is False:
         user.targets_enabled = False
     else:
         user.targets_enabled = True
@@ -186,5 +219,3 @@ def change_target(user, option, new_amount):
         user.overhead_press_target = new_amount
 
     user.save()
-
-

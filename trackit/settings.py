@@ -129,9 +129,9 @@ STATICFILES_DIRS = [
 
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
+    messages.DEBUG: 'alert alert-info',
     messages.INFO: 'alert alert-info',
-    messages.SUCCESS: 'alert-success',
+    messages.SUCCESS: 'alert alert-success',
     messages.WARNING: 'alert alert-warning',
-    messages.ERROR: 'alert-danger',
+    messages.ERROR: 'alert alert-danger',
 }

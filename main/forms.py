@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm, UserCreationForm
-from .models import Customer
+
 
 class UserSignUpForm(UserCreationForm):
 
@@ -19,7 +19,6 @@ class UserSignUpForm(UserCreationForm):
     email = forms.CharField(max_length=100, label="", required=False,
                             widget=forms.TextInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Email'}))
 
-
     password1 = forms.CharField(max_length=100, label="", required=False,
                                 widget=forms.PasswordInput(attrs={'class': 'form-control mb-3',
                                                                   'placeholder': 'Password '}))
@@ -30,6 +29,7 @@ class UserSignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', "password2")
+
 
 class UserProfileForm(UserChangeForm):
 
@@ -46,20 +46,12 @@ class UserProfileForm(UserChangeForm):
         password = None
 
 
-class UserSettingsForm(forms.Form):
-
-    weight_preference = forms.BooleanField(widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
-
-    class Meta:
-        model = Customer
-        fields = ('weight_preference')
-
 class ChangePasswordForm(PasswordChangeForm):
 
     old_password = forms.CharField(max_length=100, label="",
-                                       widget=forms.PasswordInput(attrs={'class': 'form-control mb-3',
-                                                                         'type': 'password',
-                                                                         'placeholder': 'Old Password'}))
+                                   widget=forms.PasswordInput(attrs={'class': 'form-control mb-3',
+                                                                     'type': 'password',
+                                                                     'placeholder': 'Old Password'}))
     new_password1 = forms.CharField(max_length=100, label="",
                                     widget=forms.PasswordInput(attrs={'class': 'form-control mb-3',
                                                                       'type': 'password',

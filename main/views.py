@@ -9,10 +9,11 @@ from .models import *
 from main import process
 from datetime import datetime
 from .forms import *
-import json
+
 
 @unauthenticated_user
 def login_page(request):
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -21,16 +22,17 @@ def login_page(request):
         if user is not None:
             login(request, user)
             return redirect('dashboard')
-
         else:
-            messages.error(request, 'Username or Password Incorrect')
+            messages.add_message(request, messages.ERROR, 'Username or Password Incorrect')
             return render(request, 'main/login.html')
 
     return render(request, 'main/login.html')
 
 
+@unauthenticated_user
 def register(request):
-    if request.method =='POST':
+
+    if request.method == 'POST':
         user_creation_form = UserSignUpForm(request.POST)
         if user_creation_form.is_valid():
             user_creation_form.save()
@@ -42,8 +44,7 @@ def register(request):
                                     last_name=user_creation_form.cleaned_data.get('last_name'),
                                     email=user_creation_form.cleaned_data.get('email'),
                                     weight_preference='KG')
-            messages.success(request, messages.INFO, "Account Created Successfully")
-
+            messages.add_message(request, messages.SUCCESS, "Account Created Successfully")
             return redirect('login')
     else:
         user_creation_form = UserSignUpForm(request.POST)
@@ -58,19 +59,22 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
+
 @login_required(login_url='login')
 def dashboard(request):
 
     user = Customer.objects.get(user=request.user)
 
-    """ INPUT WEIGHT """
+    # Input Weight Entry
     inputted_weight = request.POST.get('input_weight')
     if inputted_weight is not None:
+        # Checks to see of a entry has already been made on the same date
         if Weight.objects.filter(user=user, date_of_entry=datetime.today()).count() == 0:
             process.add_weight_entry(user, inputted_weight)
         else:
-            messages.error(request, 'Weight entry has already been made today')
+            messages.add_message(request, messages.ERROR, 'Weight entry has already been made today')
 
+    # Gets weight data/labels depending on users data range choice
     if 'previous_weight_entries' in request.POST:
         weight_labels, weight_data = process.get_weight_labels_and_data(user, "+10")
     elif 'next_weight_entries' in request.POST:
@@ -78,14 +82,16 @@ def dashboard(request):
     else:
         weight_labels, weight_data = process.get_weight_labels_and_data(user, 0)
 
-    """ INPUT CALORIES """
+    # Input Calorie Entry
     input_calories = request.POST.get('input_calories')
     if input_calories is not None:
+        # Checks to see of a entry has already been made on the same date
         if Calories.objects.filter(user=user, date_of_entry=datetime.today()).count() == 0:
-            Calories.objects.get_or_create(user=user, inputted_calories=input_calories, date_of_entry=datetime.today().date())
+            process.add_calorie_entry(user, input_calories)
         else:
-            messages.error(request, 'Calorie entry has already been made today')
+            messages.add_message(request, messages.ERROR, 'Calorie entry has already been made today')
 
+    # Gets calorie data/labels depending on users data range choice
     if 'previous_calorie_entries' in request.POST:
         calorie_label, calorie_data = process.get_calorie_labels_and_data(user, "+10")
     elif 'next_calorie_entries' in request.POST:
@@ -93,12 +99,22 @@ def dashboard(request):
     else:
         calorie_label, calorie_data = process.get_calorie_labels_and_data(user, 0)
 
-    """Strength Records"""
+    # Input Strength Record Entry
     exercise = request.POST.get('exercise_record')
     record_weight_amount = request.POST.get('input_record')
     if exercise is not None and record_weight_amount is not None:
-        process.add_strength_entry(user, exercise, record_weight_amount)
+        if exercise == 'Select Exercise':
+            messages.add_message(request, messages.ERROR, 'Please select a exercise when inputting a record')
+        else:
+            # Checks to see of a entry has already been made on the same date
+            if StrengthRecords.objects.filter(user=user, exercise=exercise,
+                                              date_of_record=datetime.today()).count() == 0:
+                process.add_strength_entry(user, exercise, record_weight_amount)
+            else:
+                messages.add_message(request, messages.ERROR,
+                                     'Record entry for this exercise has already been make today')
 
+    # Gets Strength Record labels depending on users data range choice
     if 'previous_record_entries' in request.POST:
         strength_record_label = process.get_strength_records_label(user, "+20")
     elif 'next_record_entries' in request.POST:
@@ -106,6 +122,7 @@ def dashboard(request):
     else:
         strength_record_label = process.get_strength_records_label(user, 0)
 
+    # Gets strength data depending on exercise
     deadlift_data = process.get_strength_record_data(user, strength_record_label, 'Deadlift', user.deadlift_record)
     bench_press_data = process.get_strength_record_data(user, strength_record_label, 'Bench Press',
                                                         user.bench_press_record)
@@ -115,14 +132,17 @@ def dashboard(request):
 
     context = {'user': user, 'weight_labels': weight_labels, 'weight_data': weight_data,
                'calorie_labels': calorie_label, 'calorie_data': calorie_data,
-               'strength_record_labels': strength_record_label, 'deadlift_data': deadlift_data, 'squat_data': squat_data,
-               'bench_press_data': bench_press_data, 'overhead_press_data': overhead_press_data}
+               'strength_record_labels': strength_record_label, 'deadlift_data': deadlift_data,
+               'squat_data': squat_data, 'bench_press_data': bench_press_data,
+               'overhead_press_data': overhead_press_data}
 
     return render(request, 'main/dashboard.html', context=context)
+
 
 @login_required(login_url='login')
 def profile(request):
 
+    # Update Profile Form
     if request.method == 'POST':
         user_update_form = UserProfileForm(request.POST, instance=request.user)
         if user_update_form.is_valid():
@@ -136,9 +156,11 @@ def profile(request):
 
     return render(request, 'main/profile.html', context=context)
 
+
 @login_required(login_url='login')
 def change_password(request):
 
+    # Change Password Form
     if request.method == 'POST':
         form = ChangePasswordForm(data=request.POST, user=request.user)
         if form.is_valid():
@@ -155,17 +177,19 @@ def change_password(request):
 
         return render(request, 'main/change_password.html', context=context)
 
+
 @login_required(login_url='login')
 def settings(request):
 
     user = Customer.objects.get(user=request.user)
 
+    # Changes weight preference to 'KG' or 'LBS'
     weight_preference = request.POST.get('change_weight_preference')
     if weight_preference != user.weight_preference and weight_preference is not None:
-        print("cjge")
         process.change_weight_preference(user, weight_preference)
         messages.add_message(request, messages.INFO, "Updated Weight Preference")
 
+    # Enables/disables targets
     enable_targets = request.POST.get('enable_targets')
     if enable_targets == 'yes':
         enable_targets = True
@@ -175,6 +199,7 @@ def settings(request):
         process.enable_or_disable_targets(user, enable_targets)
         messages.add_message(request, messages.INFO, "Enabled/Disabled Targets")
 
+    # Changes target depending on weight/exercise
     edit_weight_target = request.POST.get('edit_weight_target')
     if edit_weight_target:
         process.change_target(user, 'Weight', edit_weight_target)
@@ -199,15 +224,3 @@ def settings(request):
     context = {'user': user}
 
     return render(request, 'main/settings.html', context=context)
-
-"""
-    - can selected an black exercise
-    - can add entries multipul entries on the same day 
-    - MEssages is al over the place 
-    - says 20 when account is created 
-    - Targets still show option even if the user had made no entries 
-    
-"""
-
-
-
