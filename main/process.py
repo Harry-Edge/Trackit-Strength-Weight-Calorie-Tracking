@@ -173,7 +173,7 @@ def get_strength_record_data(user, strength_record_label, exercise, current_reco
             strength_data.append('null')
 
     """ Below checks first to see if a user has entered any strength data for a particular exercise. If any entry has
-        been made, the current data entry is appended from 'null' to the user current record. This is done so the line
+        been made, the current data entry is appended from 'null' to the users current record. This is done so the line
         chart visually looks better due to the likely-hood of strength records taking weeks/months to be broken. """
 
     if StrengthRecords.objects.filter(user=user, exercise=exercise).count() >= 1:
