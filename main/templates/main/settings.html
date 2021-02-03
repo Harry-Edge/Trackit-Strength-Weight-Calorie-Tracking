@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% block content %}
+{% load tags %}
     <div class="container">
         <br>
         <h2>Settings</h2>
@@ -54,7 +55,7 @@
                             <h5>Weight Target ({{user.weight_preference}}): </h5>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" placeholder="{{user.weight_target}}" name="edit_weight_target">
+                            <input class="form-control" placeholder="{% get_correct_target_data user user.weight_target %}" name="edit_weight_target">
                         </div>
                     </div>
                     <br>
@@ -63,7 +64,7 @@
                             <h5>Deadlift Target ({{user.weight_preference}}): </h5>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" placeholder="{{user.deadlift_target}}" name="edit_deadlift_target">
+                            <input class="form-control" placeholder="{% get_correct_target_data user user.deadlift_target %}" name="edit_deadlift_target">
                         </div>
                     </div>
                     <br>
@@ -72,7 +73,7 @@
                             <h5>Bench Press Target ({{user.weight_preference}}): </h5>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" placeholder="{{user.bench_press_target}}" name="edit_bench_press_target">
+                            <input class="form-control" placeholder="{% get_correct_target_data user user.bench_press_target %}" name="edit_bench_press_target">
                         </div>
                     </div>
                     <br>
@@ -81,7 +82,7 @@
                             <h5>Squat Target ({{user.weight_preference}}): </h5>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" placeholder="{{user.squat_target}}" name="edit_squat_target">
+                            <input class="form-control" placeholder="{% get_correct_target_data user user.squat_target %}" name="edit_squat_target">
                         </div>
                     </div>
                     <br>
@@ -90,7 +91,7 @@
                             <h5>Overhead Press Target ({{user.weight_preference}}): </h5>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" placeholder="{{user.overhead_press_target}}" name="edit_overhead_press_target">
+                            <input class="form-control" placeholder="{% get_correct_target_data user user.overhead_press_target %}" name="edit_overhead_press_target">
                         </div>
                     </div>
                 </div>

@@ -7,64 +7,86 @@
         <hr>
         {% if user.targets_enabled is True %}
             <div class="container-fluid bg-light">
-                <div class="container">
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Current</th>
-                          <th scope="col">Target</th>
-                          <th scope="col">Difference</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% check_if_weight_entry_has_been_made user as check_entry %}
-                        {% if check_entry is True %}
+                <div class="row">
+                    <div class="container col-md-3">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Average (30 Days)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Weight</strong></td>
+                                    <td>{% get_average_weight user %}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Calories</strong></td>
+                                    <td>{% get_average_calories user %} Kcal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="container col-md-9">
+                        <table class="table table-hover">
+                          <thead>
                             <tr>
-                              <td><strong>Weight:</strong></td>
-                              <td>{% return_correct_weight_data user.weight_preference user.current_weight %}</td>
-                              <td>{% return_correct_weight_data user.weight_preference user.weight_target %}</td>
-                              <td>{% return_weight_difference user.weight_preference user.weight_target user.current_weight %}</td>
+                              <th scope="col">#</th>
+                              <th scope="col">Current</th>
+                              <th scope="col">Target</th>
+                              <th scope="col">Difference</th>
                             </tr>
-                        {% endif %}
-                        {% check_if_entry_has_been_made user "Deadlift" as check_entry %}
-                        {% if check_entry is True %}
-                             <tr>
-                              <td><strong>Deadlift:</strong></td>
-                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_record %}</td>
-                              <td>{% return_correct_weight_data user.weight_preference user.deadlift_target %}</td>
-                              <td>{% return_weight_difference user.weight_preference user.deadlift_target user.deadlift_record %}</td>
+                          </thead>
+                          <tbody>
+                            {% check_if_weight_entry_has_been_made user as check_entry %}
+                            {% if check_entry is True %}
+                                <tr>
+                                  <td><strong>Weight:</strong></td>
+                                  <td>{% return_correct_weight_data user.weight_preference user.current_weight %}</td>
+                                  <td>{% return_correct_weight_data user.weight_preference user.weight_target %}</td>
+                                  <td>{% return_weight_difference user.weight_preference user.weight_target user.current_weight %}</td>
+                                </tr>
+                            {% endif %}
+                            {% check_if_entry_has_been_made user "Deadlift" as check_entry %}
+                            {% if check_entry is True %}
+                                 <tr>
+                                  <td><strong>Deadlift:</strong></td>
+                                  <td>{% return_correct_weight_data user.weight_preference user.deadlift_record %}</td>
+                                  <td>{% return_correct_weight_data user.weight_preference user.deadlift_target %}</td>
+                                  <td>{% return_weight_difference user.weight_preference user.deadlift_target user.deadlift_record %}</td>
+                                 </tr>
+                            {% endif %}
+                            {% check_if_entry_has_been_made user "Bench Press" as check_entry %}
+                            {% if check_entry is True %}
+                                <tr>
+                                  <td><strong>Bench Press:</strong></td>
+                                  <td>{% return_correct_weight_data user.weight_preference user.bench_press_record %}</td>
+                                  <td>{% return_correct_weight_data user.weight_preference user.bench_press_target %}</td>
+                                  <td>{% return_weight_difference user.weight_preference user.bench_press_target user.bench_press_record %}</td>
+                                </tr>
+                            {% endif %}
+                            {% check_if_entry_has_been_made user "Squat" as check_entry %}
+                            {% if check_entry is True %}
+                            <tr>
+                              <td><strong>Squat:</strong></td>
+                              <td>{% return_correct_weight_data user.weight_preference user.squat_record %}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.squat_target %}</td>
+                              <td>{% return_weight_difference user.weight_preference user.squat_target user.squat_record %}</td>
                              </tr>
-                        {% endif %}
-                        {% check_if_entry_has_been_made user "Bench Press" as check_entry %}
-                        {% if check_entry is True %}
-                            <tr>
-                              <td><strong>Bench Press:</strong></td>
-                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_record %}</td>
-                              <td>{% return_correct_weight_data user.weight_preference user.bench_press_target %}</td>
-                              <td>{% return_weight_difference user.weight_preference user.bench_press_target user.bench_press_record %}</td>
-                            </tr>
-                        {% endif %}
-                        {% check_if_entry_has_been_made user "Squat" as check_entry %}
-                        {% if check_entry is True %}
-                        <tr>
-                          <td><strong>Squat:</strong></td>
-                          <td>{% return_correct_weight_data user.weight_preference user.squat_record %}</td>
-                          <td>{% return_correct_weight_data user.weight_preference user.squat_target %}</td>
-                          <td>{% return_weight_difference user.weight_preference user.squat_target user.squat_record %}</td>
-                         </tr>
-                        {% endif %}
-                        {% check_if_entry_has_been_made user "Overhead Press" as check_entry %}
-                        {% if check_entry is True %}
-                         <tr>
-                          <td><strong>Overhead Press:</strong></td>
-                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_record %}</td>
-                          <td>{% return_correct_weight_data user.weight_preference user.overhead_press_target %}</td>
-                          <td>{% return_weight_difference user.weight_preference user.overhead_press_target user.overhead_press_record %}</td>
-                         </tr>
-                        {% endif %}
-                      </tbody>
-                    </table>
+                            {% endif %}
+                            {% check_if_entry_has_been_made user "Overhead Press" as check_entry %}
+                            {% if check_entry is True %}
+                             <tr>
+                              <td><strong>Overhead Press:</strong></td>
+                              <td>{% return_correct_weight_data user.weight_preference user.overhead_press_record %}</td>
+                              <td>{% return_correct_weight_data user.weight_preference user.overhead_press_target %}</td>
+                              <td>{% return_weight_difference user.weight_preference user.overhead_press_target user.overhead_press_record %}</td>
+                             </tr>
+                            {% endif %}
+                          </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <hr>

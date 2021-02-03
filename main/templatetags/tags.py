@@ -1,7 +1,43 @@
 from django import template
 from main import models
+from datetime import datetime, timedelta
 
 register = template.Library()
+
+
+@register.simple_tag
+def get_average_weight(user):
+
+    all_weights = models.Weight.objects.filter(user=user)
+    last_30_day_weight_entries = []
+
+    for entry in all_weights:
+        if entry.date_of_entry >= (datetime.today().date() - timedelta(days=30)):
+            last_30_day_weight_entries.append(entry.inputted_weight)
+
+    if user.weight_preference == 'LBS':
+        return f"{round((sum(last_30_day_weight_entries) / len(last_30_day_weight_entries) * 2.20462), 1)}" \
+               f" {user.weight_preference}"
+    return f"{round(sum(last_30_day_weight_entries) / len(last_30_day_weight_entries), 1)} {user.weight_preference}"
+
+
+@register.simple_tag
+def get_average_calories(user):
+    all_calories = models.Calories.objects.filter(user=user)
+    last_30_day_calorie_entries = []
+
+    for entry in all_calories:
+        if entry.date_of_entry >= (datetime.today().date() - timedelta(days=30)):
+            last_30_day_calorie_entries.append(entry.inputted_calories)
+
+    return f"{round(sum(last_30_day_calorie_entries) / len(last_30_day_calorie_entries))}"
+
+
+@register.simple_tag
+def get_correct_target_data(user, target):
+    if user.weight_preference == "LBS":
+        return round((target * 2.20462))
+    return target
 
 
 @register.simple_tag
