@@ -10,7 +10,7 @@ Build with Python, Django, HTML, CSS, Javascript, Chart.JS, Bootsrap.
 ![](/sampleimages/Dashboard.jpeg?raw=true "Dashboard")
 
 ## LogBook
-![](/sampleimages/LogBook.jpeg?raw=true "Logbook")
+![](/sampleimages/Logbook.jpeg?raw=true "Logbook")
 
 ## Profile
 ![](/sampleimages/Profile.jpeg?raw=true "Profile")
