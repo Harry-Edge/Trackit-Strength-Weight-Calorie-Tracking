@@ -219,3 +219,95 @@ def change_target(user, option, new_amount):
         user.overhead_press_target = new_amount
 
     user.save()
+
+
+def check_if_strength_record_has_been_changed(user, exercise, strength_record_object):
+
+    """ This function check to see if the current strength record that has been deleted/amended
+        is greater than the current record of the user. If this is true, the below code amends
+         the users strength record for a given exercise"""
+
+    if exercise == 'Deadlift':
+        if strength_record_object.weight_record == user.deadlift_record:
+            deadlift_record_list = []
+            for deaflift_record in StrengthRecords.objects.filter(user=user, exercise="Deadlift"):
+                deadlift_record_list.append(deaflift_record.weight_record)
+            deadlift_record_list.sort()
+            user.deadlift_record = deadlift_record_list[-1]
+    elif exercise == 'Bench Press':
+        if strength_record_object.weight_record == user.bench_press_record:
+            bench_press_record_list = []
+            for bench_press_record in StrengthRecords.objects.filter(user=user, exercise="Bench Press"):
+                bench_press_record_list.append(bench_press_record.weight_record)
+            bench_press_record_list.sort()
+            user.deadlift_record = bench_press_record_list[-1]
+    elif exercise == 'Overhead Press':
+        if strength_record_object.weight_record == user.overhead_press_record:
+            overhead_press_record_list = []
+            for overhead_press_record in StrengthRecords.objects.filter(user=user, exercise="Overhead Press"):
+                overhead_press_record_list.append(overhead_press_record.weight_record)
+            overhead_press_record_list.sort()
+            user.deadlift_record = overhead_press_record_list[-1]
+    if exercise == 'Squat':
+        if strength_record_object.weight_record == user.squat_record:
+            squat_record_list = []
+            for squat_record in StrengthRecords.objects.filter(user=user, exercise="Squat"):
+                squat_record_list.append(squat_record.weight_record)
+            squat_record_list.sort()
+            user.deadlift_record = squat_record_list[-1]
+
+        user.save()
+
+
+def change_weight_entry(user, weight, weight_date):
+
+    weight_entry_object = Weight.objects.get(user=user, date_of_entry=weight_date)
+    weight_entry_object.inputted_weight = weight
+    weight_entry_object.save()
+
+    """ Checks to see if the current weight that is being appended is the users latest weight update objects.
+        If so, the users current weight is appended to the new weight """
+
+    if weight_entry_object == Weight.objects.filter(user=user).order_by('-date_of_entry')[0]:
+        user.current_weight = weight
+        user.save()
+
+
+def change_calorie_entry(user, calories, calorie_date):
+
+    calorie_entry_object = Calories.objects.get(user=user, date_of_entry=calorie_date)
+    calorie_entry_object.inputted_calories = calories
+    calorie_entry_object.save()
+
+
+def change_strength_record_entry(user, weight, exercise, record_date):
+
+    strength_record_object = StrengthRecords.objects.get(user=user, exercise=exercise, date_of_record=record_date)
+    strength_record_object.weight_record = weight
+    strength_record_object.save()
+
+    check_if_strength_record_has_been_changed(user, exercise, strength_record_object)
+
+
+def delete_weight_entry(user, entry_to_delete_date):
+
+    weight_entry_object = Weight.objects.get(user=user, date_of_entry=entry_to_delete_date)
+    weight_entry_object.delete()
+
+    # Amends the user current weight to the last know weight object
+    user.current_weight = Weight.objects.filter(user=user).order_by('-date_of_entry')[0].inputted_weight
+    user.save()
+
+
+def delete_calorie_entry(user, entry_to_delete_date):
+
+    calorie_entry_object = Calories.objects.filter(user=user, date_of_entry=entry_to_delete_date)
+    calorie_entry_object.delete()
+
+
+def delete_strength_record(user, entry_to_delete_date, exercise):
+
+    strength_record_object = StrengthRecords.objects.get(user=user, date_of_record=entry_to_delete_date,
+                                                         exercise=exercise)
+    strength_record_object.delete()
+    check_if_strength_record_has_been_changed(user, exercise, strength_record_object)

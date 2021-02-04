@@ -139,6 +139,52 @@ def dashboard(request):
     return render(request, 'main/dashboard.html', context=context)
 
 
+@login_required
+def edit_entries(request):
+
+    user = Customer.objects.get(user=request.user)
+
+    # Edits entries
+    edit_weight = request.POST.get('edit_weight')
+    if edit_weight is not None:
+        process.change_weight_entry\
+            (user, edit_weight,
+             datetime.strptime(request.POST.get('date_of_weight_entry'), '%b. %d, %Y').strftime('%Y-%m-%d'))
+    edit_calories = request.POST.get('edit_calories')
+    if edit_calories is not None:
+        process.change_calorie_entry\
+            (user, edit_calories,
+             datetime.strptime(request.POST.get('date_of_calorie_entry'), '%b. %d, %Y').strftime('%Y-%m-%d'))
+    edit_strength_record = request.POST.get('edit_record')
+    if edit_strength_record is not None:
+        process.change_strength_record_entry\
+            (user, edit_strength_record, request.POST.get('edit_exercise'),
+             datetime.strptime(request.POST.get('date_of_record_entry'), '%b. %d, %Y').strftime('%Y-%m-%d') )
+
+    # Deletes entries
+    delete_weight_entry = request.POST.get('delete_weight_entry')
+    if delete_weight_entry is not None:
+        process.delete_weight_entry(user, datetime.strptime(delete_weight_entry, '%b. %d, %Y').strftime('%Y-%m-%d'))
+    delete_calorie_entry = request.POST.get('delete_calorie_entry')
+    if delete_calorie_entry is not None:
+        process.delete_calorie_entry(user, datetime.strptime(delete_calorie_entry, '%b. %d, %Y').strftime('%Y-%m-%d'))
+    delete_strength_record = request.POST.get('delete_strength_entry')
+    if delete_strength_record is not None:
+        process.delete_strength_record\
+            (user, datetime.strptime(delete_strength_record, '%b. %d, %Y').strftime('%Y-%m-%d'),
+             request.POST.get('delete_exercise'))
+
+    # Gets all of the weight/calorie/strength record entries and orders them
+    weight_entries = Weight.objects.filter(user=user).order_by("-date_of_entry")
+    calorie_entries = Calories.objects.filter(user=user).order_by("-date_of_entry")
+    strength_records = StrengthRecords.objects.filter(user=user).order_by("-date_of_record")
+
+    context = {'user': user, 'weight_entries': weight_entries, 'calorie_entries': calorie_entries,
+               'strength_records': strength_records}
+
+    return render(request, 'main/edit_entries.html', context=context)
+
+
 @login_required(login_url='login')
 def profile(request):
 
