@@ -9,6 +9,9 @@ Build with Python, Django, HTML, CSS, Javascript, Chart.JS, Bootsrap.
 ## Dashboard
 ![](/sampleimages/Dashboard.jpeg?raw=true "Dashboard")
 
+## Dashboard(continued)
+![](/sampleimages/Dashboardcontinued.jpeg?raw=true "Dashboard")
+
 ## LogBook
 ![](/sampleimages/Logbook.jpeg?raw=true "Logbook")
 
