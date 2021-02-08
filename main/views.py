@@ -75,9 +75,9 @@ def dashboard(request):
             messages.add_message(request, messages.ERROR, 'Weight entry has already been made today')
 
     # Gets weight data/labels depending on users data range choice
-    if 'previous_weight_entries' in request.POST:
+    if 'previous_weight_entries' in request.GET:
         weight_labels, weight_data = process.get_weight_labels_and_data(user, "+10")
-    elif 'next_weight_entries' in request.POST:
+    elif 'next_weight_entries' in request.GET:
         weight_labels, weight_data = process.get_weight_labels_and_data(user, "-10")
     else:
         weight_labels, weight_data = process.get_weight_labels_and_data(user, 0)
@@ -92,9 +92,9 @@ def dashboard(request):
             messages.add_message(request, messages.ERROR, 'Calorie entry has already been made today')
 
     # Gets calorie data/labels depending on users data range choice
-    if 'previous_calorie_entries' in request.POST:
+    if 'previous_calorie_entries' in request.GET:
         calorie_label, calorie_data = process.get_calorie_labels_and_data(user, "+10")
-    elif 'next_calorie_entries' in request.POST:
+    elif 'next_calorie_entries' in request.GET:
         calorie_label, calorie_data = process.get_calorie_labels_and_data(user, "-10")
     else:
         calorie_label, calorie_data = process.get_calorie_labels_and_data(user, 0)
@@ -115,9 +115,9 @@ def dashboard(request):
                                      'Record entry for this exercise has already been make today')
 
     # Gets Strength Record labels depending on users data range choice
-    if 'previous_record_entries' in request.POST:
+    if 'previous_record_entries' in request.GET:
         strength_record_label = process.get_strength_records_label(user, "+20")
-    elif 'next_record_entries' in request.POST:
+    elif 'next_record_entries' in request.GET:
         strength_record_label = process.get_strength_records_label(user, "-20")
     else:
         strength_record_label = process.get_strength_records_label(user, 0)

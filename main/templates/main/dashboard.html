@@ -138,7 +138,7 @@
                       <div class="container col-md-11">
                           <div class="row">
                               <div class="btn-group col-sm" role="group">
-                                  <form method="POST" class="btn-group col-sm">
+                                  <form method="GET" class="btn-group col-sm">
                                       {% csrf_token %}
                                       <button name="previous_weight_entries" type="submit" class="btn btn-outline-secondary btn-sm">Previous</button>
                                       <button class="btn btn-outline-secondary btn-sm">Current</button>
@@ -200,7 +200,7 @@
                        <div class="container col-md-11">
                           <div class="row">
                               <div class="btn-group col-sm" role="group">
-                                  <form method="POST" class="btn-group col-sm">
+                                  <form method="GET" class="btn-group col-sm">
                                       {% csrf_token %}
                                       <button name="previous_calorie_entries" class="btn btn-outline-secondary btn-sm">Previous</button>
                                       <button class="btn btn-outline-secondary btn-sm">Current</button>
@@ -291,7 +291,7 @@
               <div class="container col-md-8">
                   <div class="row">
                       <div class="btn-group col-sm" role="group">
-                          <form method="POST" class="btn-group col-sm">
+                          <form method="GET" class="btn-group col-sm">
                                {% csrf_token %}
                               <button name="previous_record_entries" class="btn btn-outline-secondary btn-sm">Previous</button>
                               <button class="btn btn-outline-secondary btn-sm">Current</button>
