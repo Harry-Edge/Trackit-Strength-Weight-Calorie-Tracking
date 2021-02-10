@@ -98,4 +98,23 @@ def get_exercise_options():
     """ Get the different exercise options for entry on the selector """
 
     choices = models.StrengthRecords.EXERCISE_CHOICES
+
     return [i[0] for i in choices]
+
+
+@register.simple_tag
+def get_all_manual_entries():
+
+    """ Gets all the entries (calories, weight, bench press, etc) so the user can manually add an entry """
+
+    exercises = models.StrengthRecords.EXERCISE_CHOICES
+
+    all_entries_list = ['Weight', 'Calories']
+    for i in exercises:
+        all_entries_list.append(i[0])
+
+    return all_entries_list
+
+
+
+

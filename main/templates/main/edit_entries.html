@@ -1,8 +1,35 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load tags %}
 {% block content %}
     <br>
     <div class="container col-md-12">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input class="form-control" name="manual_number_entry" placeholder="eg. 25KG / 2000 Kcal "/>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="manual_date_entry" placeholder="Enter Date Format eg. 200221">
+                    </div>
+                    <div class="col-md-3">
+                          <select class="form-select" name="manual_option_entry">
+                                <option selected>Select Option</option>
+                                  {% get_all_manual_entries as choices %}
+                                  {% for entry in choices %}
+                                    <option value="{{entry}}">{{entry}}</option>
+                                  {% endfor %}
+                          </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-success" name="manual_entry">Add Manual Entry</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <br>
         <div class="container bg-light">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item" role="presentation">

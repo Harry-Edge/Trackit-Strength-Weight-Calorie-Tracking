@@ -144,6 +144,13 @@ def edit_entries(request):
 
     user = Customer.objects.get(user=request.user)
 
+    # Manual Entries
+    if 'manual_entry' in request.POST:
+        process.add_manual_entry(user,
+                                 request.POST.get('manual_number_entry'),
+                                 request.POST.get('manual_date_entry'),
+                                 request.POST.get('manual_option_entry'))
+
     # Edits entries
     edit_weight = request.POST.get('edit_weight')
     if edit_weight is not None:
