@@ -197,7 +197,7 @@ def get_strength_record_data(user, strength_record_label, exercise, current_reco
             check_last_30_days_list = []
             for entry in strength_data[:-1]:
                 if entry != 'null':
-                    check_last_30_days_list .append(entry)
+                    check_last_30_days_list.append(entry)
             if len(check_last_30_days_list) == 0:
                 strength_data[0] = current_record
 
