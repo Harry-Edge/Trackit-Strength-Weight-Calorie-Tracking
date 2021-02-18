@@ -146,10 +146,25 @@ def edit_entries(request):
 
     # Manual Entries
     if 'manual_entry' in request.POST:
-        process.add_manual_entry(user,
-                                 request.POST.get('manual_number_entry'),
-                                 request.POST.get('manual_date_entry'),
-                                 request.POST.get('manual_option_entry'))
+        if request.POST.get('manual_option_entry') != 'Calories'\
+                and request.POST.get('manual_option_entry') != 'Weight':
+
+            """ Checks to see if a strength entry has already been made on the same date
+                and returns and error messages if applicable """
+            if StrengthRecords.objects.filter(user=user, exercise=request.POST.get('manual_option_entry'),
+                                              date_of_record=datetime.today()).count() == 0:
+                process.add_manual_entry(user,
+                                         request.POST.get('manual_number_entry'),
+                                         request.POST.get('manual_date_entry'),
+                                         request.POST.get('manual_option_entry'))
+            else:
+                messages.add_message(request, messages.ERROR,
+                                     'Record entry for this exercise has already been make today')
+        else:
+            process.add_manual_entry(user,
+                                     request.POST.get('manual_number_entry'),
+                                     request.POST.get('manual_date_entry'),
+                                     request.POST.get('manual_option_entry'))
 
     # Edits entries
     edit_weight = request.POST.get('edit_weight')

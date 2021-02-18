@@ -4,6 +4,11 @@
 {% block content %}
     <br>
     <div class="container col-md-12">
+         {% if messages %}
+            {% for message in messages %}
+                <p class="{{message.tags}}">{{message}}</p>
+            {% endfor %}
+         {% endif %}
         <form method="POST">
             {% csrf_token %}
             <div class="container">
