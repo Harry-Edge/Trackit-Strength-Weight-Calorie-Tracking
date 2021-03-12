@@ -30,6 +30,7 @@ def get_average_calories(user):
         if entry.date_of_entry >= (datetime.today().date() - timedelta(days=30)):
             last_30_day_calorie_entries.append(entry.inputted_calories)
 
+
     return f"{round(sum(last_30_day_calorie_entries) / len(last_30_day_calorie_entries))}"
 
 
